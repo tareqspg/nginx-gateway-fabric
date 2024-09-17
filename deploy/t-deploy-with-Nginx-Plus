@@ -1,0 +1,23 @@
+NGF wiht Nplus Deploment
+
+//from https://docs.nginx.com/nginx-gateway-fabric/installation/ngf-images/jwt-token-docker-secret/
+0. create a k8s secret with the nplus jwt lic  
+kubectl create secret docker-registry nginx-plus-registry-secret --docker-server=private-registry.nginx.com --docker-username=<lic-jwt-content> --docker-password=none -n nginx-gateway
+
+
+//verify secret 
+kubectl get secret nginx-plus-registry-secret --output=yaml -n nginx-gateway
+
+//from https://docs.nginx.com/nginx-gateway-fabric/installation/installing-ngf/manifests/
+
+//1. Install the Gateway API resources
+kubectl kustomize "https://github.com/nginxinc/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.4.0" | kubectl apply -f -
+
+//2. Deploy the NGINX Gateway Fabric CRDs
+kubectl apply -f https://raw.githubusercontent.com/nginxinc/nginx-gateway-fabric/v1.4.0/deploy/crds.yaml
+
+//3. Deploy NGINX Gateway Fabric - NGINX Plus
+kubectl apply -f https://raw.githubusercontent.com/nginxinc/nginx-gateway-fabric/v1.4.0/deploy/nginx-plus/deploy.yaml
+
+//verify
+kubectl get pods -n nginx-gateway
